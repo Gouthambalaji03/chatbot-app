@@ -163,4 +163,4 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## License
 
-MIT
+MIT © Goutham Balaji P S
