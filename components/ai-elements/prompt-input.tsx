@@ -52,9 +52,9 @@ export function PromptInput({
   const [files, setFiles] = React.useState<File[]>([]);
   const [textValue, setTextValue] = React.useState<string>("");
 
-  const addFiles = (newFiles: File[]) => {
+  const addFiles = React.useCallback((newFiles: File[]) => {
     setFiles((prev) => (multiple ? [...prev, ...newFiles] : newFiles));
-  };
+  }, [multiple]);
 
   const removeFile = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
@@ -81,7 +81,7 @@ export function PromptInput({
       document.removeEventListener("drop", handleDrop);
       document.removeEventListener("dragover", handleDragOver);
     };
-  }, [globalDrop]);
+  }, [globalDrop, addFiles]);
 
   return (
     <PromptInputContext.Provider value={{ files, addFiles, removeFile, onSubmit, textValue, setTextValue }}>

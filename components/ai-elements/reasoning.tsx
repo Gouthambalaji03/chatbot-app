@@ -8,7 +8,6 @@ import { BrainIcon, ChevronDownIcon } from "lucide-react";
 export function Reasoning({
   children,
   className,
-  isStreaming,
 }: {
   children: React.ReactNode;
   className?: string;

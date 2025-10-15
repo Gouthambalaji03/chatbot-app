@@ -6,7 +6,7 @@ import { ArrowDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const ConversationContext = React.createContext<{
-  scrollRef: React.RefObject<HTMLDivElement>;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
 }>({
   scrollRef: { current: null },
 });
@@ -56,13 +56,6 @@ export function ConversationScrollButton() {
   const { scrollRef } = React.useContext(ConversationContext);
   const [showScroll, setShowScroll] = React.useState(false);
 
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-      setShowScroll(scrollHeight - scrollTop - clientHeight > 100);
-    }
-  };
-
   const scrollToBottom = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -70,6 +63,13 @@ export function ConversationScrollButton() {
   };
 
   React.useEffect(() => {
+    const handleScroll = () => {
+      if (scrollRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+        setShowScroll(scrollHeight - scrollTop - clientHeight > 100);
+      }
+    };
+
     const ref = scrollRef.current;
     if (ref) {
       ref.addEventListener("scroll", handleScroll);
