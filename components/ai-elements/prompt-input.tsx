@@ -85,7 +85,7 @@ export function PromptInput({
 
   return (
     <PromptInputContext.Provider value={{ files, addFiles, removeFile, onSubmit, textValue, setTextValue }}>
-      <div className={cn("border rounded-2xl shadow-sm bg-background", className)}>{children}</div>
+      <div className={cn("border-2 border-gray-300 dark:border-gray-600 rounded-2xl shadow-xl bg-white dark:bg-gray-800 focus-within:border-green-500 dark:focus-within:border-green-500 transition-all duration-200", className)}>{children}</div>
     </PromptInputContext.Provider>
   );
 }
@@ -97,7 +97,7 @@ export function PromptInputBody({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn("p-3", className)}>{children}</div>;
+  return <div className={cn("p-4", className)}>{children}</div>;
 }
 
 export function PromptInputTextarea({
@@ -138,7 +138,7 @@ export function PromptInputTextarea({
       onChange={handleChange}
       placeholder={placeholder}
       className={cn(
-        "w-full resize-none border-0 bg-transparent focus:outline-none focus:ring-0 text-base",
+        "w-full resize-none border-0 bg-transparent focus:outline-none focus:ring-0 text-base text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 leading-7 font-medium",
         className
       )}
       rows={1}
@@ -189,7 +189,7 @@ export function PromptInputToolbar({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-center justify-between border-t p-2", className)}>
+    <div className={cn("flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 py-3", className)}>
       {children}
     </div>
   );
@@ -202,7 +202,7 @@ export function PromptInputTools({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn("flex items-center gap-2", className)}>{children}</div>;
+  return <div className={cn("flex items-center gap-3", className)}>{children}</div>;
 }
 
 export function PromptInputSubmit({
@@ -253,7 +253,15 @@ export function PromptInputButton({
   className?: string;
 }) {
   return (
-    <Button variant={variant} size="sm" onClick={onClick} className={className}>
+    <Button 
+      variant={variant} 
+      size="sm" 
+      onClick={onClick} 
+      className={cn(
+        "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700",
+        className
+      )}
+    >
       {children}
     </Button>
   );
@@ -269,13 +277,26 @@ export function PromptInputActionMenu({
   return (
     <div className="relative">
       <div onClick={() => setOpen(!open)}>{children}</div>
+      {open && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setOpen(false)}
+        />
+      )}
     </div>
   );
 }
 
 export function PromptInputActionMenuTrigger({ className }: { className?: string }) {
   return (
-    <Button variant="ghost" size="icon" className={className}>
+    <Button 
+      variant="ghost" 
+      size="icon" 
+      className={cn(
+        "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700",
+        className
+      )}
+    >
       <MoreHorizontalIcon className="h-4 w-4" />
     </Button>
   );
@@ -291,7 +312,7 @@ export function PromptInputActionMenuContent({
   return (
     <div
       className={cn(
-        "absolute bottom-full left-0 mb-2 bg-popover border rounded-md shadow-md p-1",
+        "absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg p-2 z-50 w-48",
         className
       )}
     >
@@ -323,10 +344,13 @@ export function PromptInputActionAddAttachments({ className }: { className?: str
         variant="ghost"
         size="sm"
         onClick={() => inputRef.current?.click()}
-        className={cn("w-full justify-start", className)}
+        className={cn(
+          "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 h-auto",
+          className
+        )}
       >
         <PaperclipIcon className="h-4 w-4 mr-2" />
-        Add attachments
+        <span>Add attachments</span>
       </Button>
     </>
   );

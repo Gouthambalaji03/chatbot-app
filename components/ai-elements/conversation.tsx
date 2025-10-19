@@ -83,7 +83,7 @@ export function ConversationScrollButton() {
     <Button
       onClick={scrollToBottom}
       size="icon"
-      className="absolute bottom-24 right-8 rounded-full shadow-lg"
+      className="absolute bottom-24 right-8 rounded-full shadow-lg bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
     >
       <ArrowDownIcon className="h-4 w-4" />
     </Button>

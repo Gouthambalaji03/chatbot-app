@@ -17,47 +17,72 @@ interface UIMessage {
 }
 
 export async function POST(req: Request) {
-  const {
-    messages,
-    model,
-  }: {
-    messages: UIMessage[];
-    model: string;
-    webSearch?: boolean;
-  } = await req.json();
+  try {
+    const {
+      messages,
+      model,
+    }: {
+      messages: UIMessage[];
+      model: string;
+      webSearch?: boolean;
+    } = await req.json();
 
-  // Configure the AI provider
-  const openai = createOpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+    console.log('API Route - Received request:', { messages, model });
 
-  // Select the model to use
-  const modelName = model.split('/')[1] || 'gpt-4o';
+    // Check if API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not configured');
+      return new Response(JSON.stringify({ 
+        error: 'OpenAI API key not configured. Please set OPENAI_API_KEY in your environment variables.' 
+      }), { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
-  // Convert UIMessage format to the format expected by streamText
-  const convertedMessages = messages.map((msg) => {
-    if (msg.parts) {
-      // If message has parts, extract text from parts
-      const textParts = msg.parts.filter(part => part.type === 'text');
-      const content = textParts.map(part => part.text).join('\n');
+    // Configure the AI provider
+    const openai = createOpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    // Select the model to use
+    const modelName = model.split('/')[1] || 'gpt-4o';
+
+    // Convert UIMessage format to the format expected by streamText
+    const convertedMessages = messages.map((msg) => {
+      if (msg.parts) {
+        // If message has parts, extract text from parts
+        const textParts = msg.parts.filter(part => part.type === 'text');
+        const content = textParts.map(part => part.text).join('\n');
+        return {
+          role: msg.role,
+          content: content,
+        };
+      }
+      // If message already has content, use it
       return {
         role: msg.role,
-        content: content,
+        content: msg.content || '',
       };
-    }
-    // If message already has content, use it
-    return {
-      role: msg.role,
-      content: msg.content || '',
-    };
-  });
+    });
 
-  const result = streamText({
-    model: openai(modelName),
-    messages: convertedMessages,
-    system:
-      'You are a helpful assistant that can answer questions and help with tasks',
-  });
+    console.log('API Route - Converted messages:', convertedMessages);
 
-  return result.toTextStreamResponse();
+    const result = streamText({
+      model: openai(modelName),
+      messages: convertedMessages,
+      system: 'You are a helpful assistant that can answer questions and help with tasks. Provide clear, helpful responses.',
+    });
+
+    console.log('API Route - Streaming response for model:', modelName);
+    return result.toTextStreamResponse();
+  } catch (error) {
+    console.error('API Route - Error:', error);
+    return new Response(JSON.stringify({ 
+      error: 'Internal server error: ' + (error as Error).message 
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
